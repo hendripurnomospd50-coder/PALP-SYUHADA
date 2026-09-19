@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misi Bendahara Pemerintah - Persamaan Dasar Akuntansi</title>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#0f766e,#164e63);color:#123}
+.container{max-width:1050px;margin:auto;padding:20px}
+.card{background:#fff;border-radius:20px;padding:25px;box-shadow:0 10px 30px rgba(0,0,0,.18);margin:15px 0}
+h1,h2{margin-top:0}.hero{text-align:center;color:white;padding:25px 10px}.hero h1{font-size:34px}
+.badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.badge{background:#ffffff22;color:#fff;padding:8px 14px;border-radius:30px}
+.eq{font-size:28px;font-weight:bold;text-align:center;padding:18px;background:#ecfeff;border-radius:14px;margin:15px 0}
+.stats{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.stat{flex:1;min-width:120px;background:#f1f5f9;padding:12px;border-radius:12px;text-align:center}
+button{border:0;border-radius:12px;padding:13px 18px;font-size:16px;font-weight:bold;cursor:pointer;margin:6px}
+.primary{background:#0f766e;color:#fff}.secondary{background:#e2e8f0}.danger{background:#dc2626;color:#fff}
+.options{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.option{background:#f8fafc;border:2px solid #cbd5e1;padding:15px;border-radius:14px;cursor:pointer;text-align:left}
+.option:hover{border-color:#0f766e}.option.selected{border-color:#0f766e;background:#ccfbf1}.option.correct{border-color:#16a34a;background:#dcfce7}.option.wrong{border-color:#dc2626;background:#fee2e2}
+.hidden{display:none}.progress{height:12px;background:#e2e8f0;border-radius:10px;overflow:hidden}.bar{height:100%;background:#14b8a6;width:0%;transition:.3s}
+.feedback{padding:15px;border-radius:12px;margin-top:15px;font-weight:bold}.ok{background:#dcfce7;color:#166534}.no{background:#fee2e2;color:#991b1b}
+.small{color:#64748b}.transaction{font-size:20px;font-weight:bold;padding:16px;background:#f8fafc;border-radius:14px}
+.table{width:100%;border-collapse:collapse;margin-top:15px}.table th,.table td{border:1px solid #cbd5e1;padding:10px;text-align:center}.table th{background:#e2e8f0}
+.final{text-align:center}.scorebig{font-size:54px;font-weight:900;color:#0f766e}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="hero">
+    <div class="badges"><span class="badge">🎮 Game Pembelajaran</span><span class="badge">🏛️ Akuntansi Pemerintah</span><span class="badge">XI AKL</span></div>
+    <h1>MISSION: BENDAHARA PEMERINTAH</h1>
+    <p>Taklukkan transaksi, jaga keseimbangan, dan buktikan: <b>ASET = KEWAJIBAN + EKUITAS</b></p>
+  </div>
+
+  <div id="start" class="card">
+    <h2>🎯 Misi Kamu</h2>
+    <p>Kamu menjadi tim pengelola keuangan pemerintah. Setiap transaksi harus dianalisis dengan teliti agar persamaan akuntansi tetap seimbang.</p>
+    <ul>
+      <li>Level 1: Kenali pengaruh transaksi.</li>
+      <li>Level 2: Pecahkan transaksi lebih menantang.</li>
+      <li>Level 3: Selamatkan laporan keuangan dan jaga keseimbangan.</li>
+    </ul>
+    <div class="eq">ASET = KEWAJIBAN + EKUITAS</div>
+    <p class="small">Materi mengikuti LKPD: aset, kewajiban, ekuitas, transaksi tunai/kredit, pembayaran utang, belanja operasional, dan verifikasi keseimbangan.</p>
+    <button class="primary" onclick="startGame()">🚀 MULAI MISI</button>
+  </div>
+
+  <div id="game" class="hidden">
+    <div class="card">
+      <div class="stats">
+        <div class="stat">⭐ Skor<br><b id="score">0</b></div>
+        <div class="stat">❤️ Nyawa<br><b id="lives">3</b></div>
+        <div class="stat">📍 Level<br><b id="level">1</b></div>
+        <div class="stat">⏱️ Waktu<br><b id="timer">30</b>s</div>
+      </div>
+      <div class="progress" style="margin-top:15px"><div id="bar" class="bar"></div></div>
+    </div>
+
+    <div class="card">
+      <p class="small" id="qnum"></p>
+      <div class="transaction" id="question"></div>
+      <p><b id="instruction"></b></p>
+      <div id="options" class="options"></div>
+      <div id="feedback" class="hidden feedback"></div>
+      <button id="next" class="primary hidden" onclick="nextQuestion()">LANJUT ➜</button>
+    </div>
+  </div>
+
+  <div id="result" class="card final hidden">
+    <h2>🏆 MISI SELESAI!</h2>
+    <div class="scorebig" id="finalScore">0</div>
+    <p id="finalMessage"></p>
+    <table class="table">
+      <tr><th>Indikator</th><th>Hasil</th></tr>
+      <tr><td>Jawaban benar</td><td id="correctCount"></td></tr>
+      <tr><td>Total soal</td><td id="totalCount"></td></tr>
+      <tr><td>Ketelitian</td><td id="accuracy"></td></tr>
+    </table>
+    <button class="primary" onclick="location.reload()">🔄 MAIN LAGI</button>
+  </div>
+</div>
+
+<script>
+const questions=[
+{l:1,q:"Pemerintah menerima kas Rp800.000.000.",i:"Apa pengaruh terhadap Aset, Kewajiban, dan Ekuitas?",o:["Aset +800 jt, Kewajiban 0, Ekuitas +800 jt","Aset 0, Kewajiban +800 jt, Ekuitas 0","Aset -800 jt, Kewajiban 0, Ekuitas -800 jt","Aset +800 jt, Kewajiban +800 jt, Ekuitas 0"],a:0,e:"Kas bertambah sebagai aset dan dalam penyederhanaan LKPD menjadi sumber ekuitas."},
+{l:1,q:"Pemerintah membeli peralatan kantor secara tunai Rp150.000.000.",i:"Pilih analisis yang tepat.",o:["Aset +150 jt dan Kewajiban +150 jt","Total aset tetap; kas -150 jt dan peralatan +150 jt","Aset -150 jt dan Ekuitas -150 jt","Kewajiban +150 jt dan Ekuitas -150 jt"],a:1,e:"Terjadi perpindahan bentuk aset: kas berkurang, peralatan bertambah dengan nilai sama."},
+{l:1,q:"Pemerintah membeli kendaraan dinas secara kredit Rp250.000.000.",i:"Apa dampaknya?",o:["Aset +250 jt, Kewajiban +250 jt, Ekuitas 0","Aset 0, Kewajiban +250 jt, Ekuitas +250 jt","Aset -250 jt, Kewajiban -250 jt, Ekuitas 0","Aset +250 jt, Kewajiban 0, Ekuitas +250 jt"],a:0,e:"Kendaraan bertambah dan timbul utang/kewajiban."},
+{l:1,q:"Pemerintah membayar utang Rp100.000.000.",i:"Apa yang berubah?",o:["Aset +100 jt, Kewajiban +100 jt","Aset -100 jt, Kewajiban -100 jt","Aset -100 jt, Ekuitas -100 jt","Kewajiban -100 jt, Ekuitas +100 jt"],a:1,e:"Kas dan utang berkurang dengan jumlah yang sama."},
+{l:2,q:"Pemerintah membayar belanja operasional Rp125.000.000.",i:"Dalam penyederhanaan LKPD, bagaimana pengaruhnya?",o:["Aset -125 jt dan Ekuitas -125 jt","Aset +125 jt dan Ekuitas +125 jt","Kewajiban -125 jt dan Ekuitas 0","Aset tetap, Kewajiban +125 jt"],a:0,e:"Kas berkurang dan belanja operasional mengurangi ekuitas."},
+{l:2,q:"Pemerintah membeli komputer Rp25.000.000 secara tunai.",i:"Apa yang terjadi pada total aset?",o:["Bertambah Rp25 jt","Berkurang Rp25 jt","Tidak berubah","Menjadi nol"],a:2,e:"Kas berkurang Rp25 jt, peralatan bertambah Rp25 jt; total aset tetap."},
+{l:2,q:"Jika Aset Rp1.000.000.000 dan Kewajiban Rp300.000.000, berapa Ekuitas?",i:"Gunakan rumus Ekuitas = Aset − Kewajiban.",o:["Rp300.000.000","Rp500.000.000","Rp700.000.000","Rp1.300.000.000"],a:2,e:"Rp1.000.000.000 − Rp300.000.000 = Rp700.000.000."},
+{l:2,q:"Transaksi mana yang menyebabkan kewajiban bertambah?",i:"Pilih transaksi yang tepat.",o:["Menerima kas","Membeli peralatan tunai","Membeli kendaraan secara kredit","Membayar utang"],a:2,e:"Pembelian kendaraan secara kredit menimbulkan kewajiban."},
+{l:3,q:"Kasus akhir periode: menerima kas Rp1 M; membeli tanah tunai Rp300 jt; membeli kendaraan kredit Rp200 jt; membayar utang Rp50 jt; membayar operasional Rp100 jt; membeli komputer tunai Rp50 jt.",i:"Berapa total ASET akhir periode?",o:["Rp950.000.000","Rp1.000.000.000","Rp1.050.000.000","Rp1.100.000.000"],a:2,e:"Total aset = 1 M + 200 jt − 50 jt − 100 jt = Rp1,05 M. Pembelian tanah dan komputer tunai tidak mengubah total aset."},
+{l:3,q:"Dari kasus yang sama, berapa total KEWAJIBAN akhir periode?",i:"Hitung kewajiban setelah pembayaran utang.",o:["Rp50.000.000","Rp100.000.000","Rp150.000.000","Rp200.000.000"],a:2,e:"Kewajiban = Rp200 jt − Rp50 jt = Rp150 jt."},
+{l:3,q:"Dari kasus yang sama, berapa EKUITAS akhir periode?",i:"Gunakan hubungan Aset = Kewajiban + Ekuitas.",o:["Rp800.000.000","Rp900.000.000","Rp950.000.000","Rp1.000.000.000"],a:1,e:"Ekuitas = Rp1,05 M − Rp150 jt = Rp900 jt."},
+{l:3,q:"Bukti akhir kasus: Aset Rp1.050.000.000, Kewajiban Rp150.000.000, Ekuitas Rp900.000.000.",i:"Apakah persamaan seimbang?",o:["Tidak, selisih Rp150 jt","Tidak, selisih Rp900 jt","Ya, karena 1,05 M = 150 jt + 900 jt","Tidak dapat ditentukan"],a:2,e:"Rp1.050.000.000 = Rp150.000.000 + Rp900.000.000. Persamaan seimbang."}
+];
+
+let idx=0,score=0,lives=3,correct=0,timer=30,interval;
+function startGame(){document.getElementById('start').classList.add('hidden');document.getElementById('game').classList.remove('hidden');idx=0;score=0;lives=3;correct=0;showQuestion();}
+function showQuestion(){
+ clearInterval(interval);timer=30;document.getElementById('timer').textContent=timer;
+ const x=questions[idx];document.getElementById('level').textContent=x.l;
+ document.getElementById('qnum').textContent=`Soal ${idx+1} dari ${questions.length}`;
+ document.getElementById('question').textContent=x.q;document.getElementById('instruction').textContent=x.i;
+ document.getElementById('score').textContent=score;document.getElementById('lives').textContent=lives;
+ document.getElementById('bar').style.width=((idx/questions.length)*100)+'%');
+ const box=document.getElementById('options');box.innerHTML='';
+ x.o.forEach((v,i)=>{let b=document.createElement('div');b.className='option';b.textContent=String.fromCharCode(65+i)+'. '+v;b.onclick=()=>answer(i,b);box.appendChild(b);});
+ document.getElementById('feedback').className='hidden feedback';document.getElementById('next').classList.add('hidden');
+ interval=setInterval(()=>{timer--;document.getElementById('timer').textContent=timer;if(timer<=0){clearInterval(interval);answer(-1,null)}},1000);
+}
+function answer(choice,el){
+ if(!document.getElementById('next').classList.contains('hidden'))return;
+ clearInterval(interval);const x=questions[idx];let good=choice===x.a;
+ document.querySelectorAll('.option').forEach((b,i)=>{if(i===x.a)b.classList.add('correct');if(i===choice&&!good)b.classList.add('wrong');});
+ const f=document.getElementById('feedback');f.className='feedback '+(good?'ok':'no');
+ if(good){score+=100+timer*2;correct++;f.innerHTML='✅ BENAR! '+x.e}else{lives--;f.innerHTML='❌ BELUM TEPAT. '+x.e;document.getElementById('lives').textContent=lives;}
+ document.getElementById('score').textContent=score;document.getElementById('next').classList.remove('hidden');
+ if(lives<=0){document.getElementById('next').textContent='LIHAT HASIL';}
+}
+function nextQuestion(){
+ if(lives<=0 || idx===questions.length-1){finish();return}
+ idx++;showQuestion();
+}
+function finish(){
+ clearInterval(interval);document.getElementById('game').classList.add('hidden');document.getElementById('result').classList.remove('hidden');
+ document.getElementById('finalScore').textContent=score;
+ document.getElementById('correctCount').textContent=correct;
+ document.getElementById('totalCount').textContent=questions.length;
+ document.getElementById('accuracy').textContent=Math.round(correct/questions.length*100)+'%';
+ let m=score>=1000?'🏆 Bendahara Ahli!':score>=700?'👏 Bendahara Andal!':score>=400?'👍 Terus Berlatih!':'💪 Semangat, ulangi misi!';
+ document.getElementById('finalMessage').textContent=m+' Ingat: akuntansi bukan sekadar angka—setiap transaksi harus logis, teliti, jujur, dan dapat dipertanggungjawabkan.';
+}
+</script>
+</body>
+</html>
